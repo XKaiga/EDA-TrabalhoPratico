@@ -128,14 +128,14 @@ int saveClients(clientList* ClientList) {
 #pragma region ClientsFunctions
 
 //insert a client into the list
-int insertClient(clientList* ClientList, int n, char nam[], int m, char addr[]) {
+int insertClient(clientList** ClientList, int n, char nam[], int m, char addr[]) {
 	//start at the head of the list
-	clientList* aux = ClientList;
+	clientList* aux = *ClientList;
 
-	if (ClientList->c.nif == n)
+	if ((*ClientList)->c.nif == n)
 		return -4;
 
-	while (aux != NULL && aux->next != ClientList)
+	while (aux != NULL && aux->next != *ClientList)
 	{
 		//if already exists, return false
 		if (aux->c.nif == n)
@@ -159,12 +159,12 @@ int insertClient(clientList* ClientList, int n, char nam[], int m, char addr[]) 
 	}
 	//if list is empty, insert as the head of the list
 	else {
-		ClientList = v;
+		*ClientList = v;
 	}
 
 	//make the list circular
-	v->next = ClientList;
-	ClientList->previous = v;
+	v->next = *ClientList;
+	(*ClientList)->previous = v;
 
 	return 0;
 }

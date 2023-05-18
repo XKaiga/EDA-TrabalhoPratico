@@ -12,5 +12,6 @@
 #include "HClients.h"
 #include "HRecords.h"
 #include "HGraphs.h"
+#include <locale.h>
 
 #endif

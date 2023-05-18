@@ -7,17 +7,24 @@
 
 #pragma region Structs
 
+typedef struct {
+	int cod;
+	int distance;
+	struct adjLocal* next;
+}adjLocal;
+
 typedef struct
 {
+	int cod;
 	char name[N];
-	localList nextLocals;
+	bool visited;
+	struct adjLocal* adjLocals;
 }local;
 
 typedef struct {
 	local l;
-	int distance;
-	localList* next;
-	localList* previous;
+	struct localList* next;
+	struct localList* previous;
 }localList, *pLocalList;
 
 #pragma endregion
@@ -35,8 +42,12 @@ typedef struct {
 #pragma region Functions
 
 //create a local
+local newLocal(int cod, char* name);
+//insert a local into the graph
+insertLocal(pLocalList* graph, local braga);
 
-//?
+//create a adjacent local
+adjLocal* newAdjLocal(int cod, int dist);
 
 #pragma endregion
 
