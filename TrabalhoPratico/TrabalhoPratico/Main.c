@@ -9,7 +9,6 @@
 #include "Headers.h"
 
 main() {
-	setlocale(LC_ALL, "Portuguese");	//para escrever caracteres portugueses
 	vehicleList* VehicleList = NULL;
 	clientList* ClientList = NULL;
 	recordList* RecordList = NULL;
@@ -21,17 +20,25 @@ main() {
 	localList* graph = NULL;
 	int localCod = 1;
 
-	local braga = newLocal(localCod, "Braga");
+	//insert new locals into the graph
+	insertNewLocal(&graph, localCod, "Braga");
+	localCod++;
+	insertNewLocal(&graph, localCod, "Faro");
+	localCod++;
+	insertNewLocal(&graph, localCod, "Barcelos");
 	localCod++;
 
-	//insert a local into the graph
-	insertLocal(&graph, braga);
+	localList* aux = graph->next;
+	while (aux != graph)
+	{
+		printf("%s\n", aux->l.name);
+		aux = aux->next;
+		if (aux == graph)
+			printf("%s\n", aux->l.name);
+	}
 
-	adjLocal* c = newAdjLocal(braga.cod, 2);
-	adjLocal* c2 = newAdjLocal(braga.cod, 4);
-
-	//insert a adjacent local into a local's adjacents list
-
+	//create a adjacent local
+	//insert a adjacent local into a local
 
 	//create
 	//show

@@ -60,17 +60,16 @@
 local newLocal(int cod, char* name) {
 	local newlocal;
 	newlocal.adjLocals = NULL;
-	newlocal.visited = false;
 	strcpy(newlocal.name, name);
 	newlocal.cod = cod;
 	return newlocal;
 }
 
-//insert a local into the graph
-bool insertLocal(pLocalList* graph, local braga) {
-	if (!*graph) {
+//insert a new local into the graph
+bool insertNewLocal(pLocalList* graph, int cod, char* name) {
+	if (*graph == NULL) {
 		*graph = (localList*)malloc(sizeof(localList));
-		(*graph)->l = braga;
+		(*graph)->l = newLocal(cod, name);
 		(*graph)->previous = NULL;
 		(*graph)->next = *graph;
 		return true;
@@ -83,10 +82,11 @@ bool insertLocal(pLocalList* graph, local braga) {
 	aux->next = (localList*)malloc(sizeof(localList));
 	localList* aux2 = aux;
 	aux = aux->next;
+	aux->l = newLocal(cod, name);
 	aux->previous = aux2;
 	aux->next = *graph;
 	(*graph)->previous = aux;
-
+	return true;
 }
 
 //create a adjacent local
@@ -99,6 +99,27 @@ adjLocal* newAdjLocal(int cod, int dist) {
 	adjL->distance = dist;
 	adjL->next = NULL;
 	return adjL;
+}
+
+//insert a adjacent local into a local
+adjLocal* insertAdjLocal(adjLocal* adjsLocal, adjLocal* adjL) {
+	if (adjL == NULL)
+		return NULL;
+	
+	adjLocal* aux = adjsLocal;
+
+	while (aux)
+		aux = aux->next;
+
+	if (adjsLocal == NULL)
+	{
+		aux = adjL;
+		return adjsLocal;
+	}
+
+	adjL->next = adjsLocal;
+	adjsLocal = adjL;
+	return adjsLocal;
 }
 
 #pragma endregion

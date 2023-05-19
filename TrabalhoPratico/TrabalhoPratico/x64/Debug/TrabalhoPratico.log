@@ -1,9 +1,1 @@
-﻿  Graphs.c
-D:\IPCA\1_Year\2_Semester\EDA_EstruturasDeDadosAvançadas\EDA-TrabalhoPratico\TrabalhoPratico\TrabalhoPratico\Graphs.c(64,2): warning C4013: 'strcpy' undefined; assuming extern returning int
-  Main.c
-D:\IPCA\1_Year\2_Semester\EDA_EstruturasDeDadosAvançadas\EDA-TrabalhoPratico\TrabalhoPratico\TrabalhoPratico\Main.c(17,33): warning C4047: 'function': 'pVehicleList *' differs in levels of indirection from 'vehicleList **'
-D:\IPCA\1_Year\2_Semester\EDA_EstruturasDeDadosAvançadas\EDA-TrabalhoPratico\TrabalhoPratico\TrabalhoPratico\Main.c(17,21): warning C4024: 'loadBinVehicleData': different types for formal and actual parameter 1
-D:\IPCA\1_Year\2_Semester\EDA_EstruturasDeDadosAvançadas\EDA-TrabalhoPratico\TrabalhoPratico\TrabalhoPratico\Main.c(19,31): warning C4047: 'function': 'pRecordList *' differs in levels of indirection from 'recordList **'
-D:\IPCA\1_Year\2_Semester\EDA_EstruturasDeDadosAvançadas\EDA-TrabalhoPratico\TrabalhoPratico\TrabalhoPratico\Main.c(19,20): warning C4024: 'loadBinRecordData': different types for formal and actual parameter 1
-  Generating Code...
-  TrabalhoPratico.vcxproj -> D:\IPCA\1_Year\2_Semester\EDA_EstruturasDeDadosAvançadas\EDA-TrabalhoPratico\TrabalhoPratico\x64\Debug\TrabalhoPratico.exe
+﻿  TrabalhoPratico.vcxproj -> D:\IPCA\1_Year\2_Semester\EDA_EstruturasDeDadosAvançadas\EDA-TrabalhoPratico\TrabalhoPratico\x64\Debug\TrabalhoPratico.exe

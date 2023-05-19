@@ -17,7 +17,6 @@ typedef struct
 {
 	int cod;
 	char name[N];
-	bool visited;
 	struct adjLocal* adjLocals;
 }local;
 
@@ -43,11 +42,13 @@ typedef struct {
 
 //create a local
 local newLocal(int cod, char* name);
-//insert a local into the graph
-insertLocal(pLocalList* graph, local braga);
+//insert a new local into the graph
+bool insertNewLocal(pLocalList* graph, int cod, char* name);
 
 //create a adjacent local
 adjLocal* newAdjLocal(int cod, int dist);
+//insert a adjacent local into a local
+adjLocal* insertAdjLocal(adjLocal* ajdsLocal, adjLocal* adjL);
 
 #pragma endregion
 
