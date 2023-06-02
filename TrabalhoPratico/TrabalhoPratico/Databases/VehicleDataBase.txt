@@ -1,3 +1,9 @@
-1;Tesla;Eletrico;inventor.obstacle.rants;13000;3000;4
-2;Audi;Eletrico;pardon.rejects.wanted;17000;4000;2
-3;Opel;Eletrico;heads.cobbles.handwriting;21000;6000;2
+1;Tesla;Eletrico;Vila Real;38;3000;3
+2;Audi;Eletrico;Braganca;49;4000;1
+3;Opel;Combustivel;Guarda;51;6000;10
+4;Ford;Combustivel;Porto;27;4500;8
+5;Mercedes;Eletrico;Coimbra;43;3500;2
+6;Volkswagen;Eletrico;Aveiro;50;3800;4
+7;Renault;Combustivel;Braga;11;5500;7
+8;Fiat;Combustivel;Aveiro;10;4200;9
+9;Toyota;Combustivel;Guarda;28;4800;3

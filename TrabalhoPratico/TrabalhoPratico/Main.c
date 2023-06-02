@@ -12,54 +12,54 @@ main() {
 	vehicleList* VehicleList = NULL;
 	clientList* ClientList = NULL;
 	recordList* RecordList = NULL;
+	localList* graph = NULL;
 
 	loadBinVehicleData(&VehicleList);
 	loadBinClientData(&ClientList);
 	loadBinRecordData(&RecordList);
+	
+	//loadBinGraphData(&graph);
+	loadBinLocalsData(&graph);
+	loadBinAdjLocalsData(&graph);
 
-	localList* graph = NULL;
-	int localCod = 1;
+#pragma region findShortestPath
+	///*localList* aux3 = graph;
+	//do
+	//{
+	//	if (strcmp(aux3->l.name, "Braga") == 0)
+	//	{
+	//		adjLocalList* a = aux3->adjLocals;
+	//		do
+	//		{
+	//			char* b = findLocalNameByCod(graph, a->adjL.cod);
+	//			if (strcmp(b, "Vila Real") == 0) {
+	//				a->adjL.distance = 10;
+	//				break;
+	//			}
+	//			a = a->next;
+	//		} while (a != aux3->adjLocals);
+	//		break;
+	//	}
+	//	aux3 = aux3->next;
+	//} while (aux3 != graph);*/
 
-	//insert new locals into the graph
-	insertNewLocal(&graph, localCod, "Braga");
-	localCod++;
-	insertNewLocal(&graph, localCod, "Faro");
-	localCod++;
-	insertNewLocal(&graph, localCod, "Barcelos");
-	localCod++;
 
-	localList* aux = graph->next;
-	while (aux != graph)
-	{
-		printf("%s\n", aux->l.name);
-		aux = aux->next;
-		if (aux == graph)
-			printf("%s\n", aux->l.name);
-	}
+	//localList* path2[2] = { NULL };
+	//localList* path = NULL;
+	//int kms[2] = { 0,0 };
+	//bool finded = findShortestPath(graph, "Braga", "Viseu", kms, (localList * [2]) { &path, NULL }/*&path*/);
+	//printf("km to be done: %d\n\n", kms[0]);
 
-	//create a adjacent local
-	//insert a adjacent local into a local
 
-	//create
-	//show
-	/*
-		Vertice* CriaVertice(char* cidade, int tot);
-		Vertice* InsereVertice(Vertice* g, Vertice* novo, bool*res);
-		void MostraGrafo(Vertice* g);
-		int ProcuraCodigoVertice(Vertice* g, char* cidade);
-		Vertice* ProcuraVertice(Vertice* g, char* cidade);
-		Vertice* ProcuraVerticeCod(Vertice* g, int cod);
+	//localList* aux = path;
+	//printf("Path: ");
+	//do
+	//{
+	//	printf("\n\t%s", aux->l.name);
+	//	aux = aux->next;
+	//} while (aux != path);
+#pragma endregion
 
-		Vertice* InsereAdjacenteVertice(Vertice* g, char* origem, char* dest, float peso, bool* res);
-		Adj* CriaAdj(int cod, float peso);
-		Adj* InsereAdj(Adj* h, Adj* novo, bool* res);
-		bool ExisteAdjacentes(Adj* h, int cod);
-		void MostraAdjacencias(Adj* h);
-
-		int CountPaths(Vertice* g, int src, int dst, int pathCount);
-		int CountPathsVerticesName(Vertice* g, char* src, char* dest, int pathCount);
-		bool DepthFirstSearchRec(Vertice* g, int origem, int dest);
-		bool DepthFirstSearchNamesRec(Vertice* g, char* src, char* dest);
-		Vertice* ResetVerticesVisitados(Vertice* g);
-	*/
+	char nameOrigin[N] = "Braga";
+	travelingSalesman(VehicleList, 2, graph, nameOrigin) ? printf("\n\n\t True\n") : printf("\n\n\t False\n");
 }

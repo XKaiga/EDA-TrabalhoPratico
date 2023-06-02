@@ -1,4 +1,10 @@
-
+/*****************************************************************//**
+ * \file   Record.c
+ * \brief  Record's Functions
+ * 
+ * \author Helder
+ * \date   June 2023
+ *********************************************************************/
 #include "Headers.h"
 
 #pragma region Save&Load
@@ -32,7 +38,7 @@ int loadTxtRecordData(pRecordList* pRecordList, clientList* ClientList, vehicleL
 		}
 
 		findClient(ClientList, records->r.c.nif, &(records->r.c));
-		findVehicle(VehicleList, records->r.v.cod, &(records->r.v));
+		findVehicleCircularList(VehicleList, records->r.v.cod, &(records->r.v));
 
 		//if the list is empty, set the new node as the head of the list
 		if (aux == NULL)
@@ -70,7 +76,7 @@ int loadBinRecordData(pRecordList* pRecordList) {
 			return -2;
 
 		//read the data from the file into the current node
-		fread(&records->r, sizeof(recordList), 1, fp);
+		fread(&records->r, sizeof(record), 1, fp);
 		if (records == NULL || feof(fp))
 		{
 			free(records);
@@ -119,7 +125,7 @@ int saveRecords(recordList* RecordList) {
 	do
 	{
 		//write the contents of the current node to the file
-		fwrite(aux, sizeof(recordList), 1, fp);
+		fwrite(&aux->r, sizeof(record), 1, fp);
 		aux = aux->next;
 	} while (aux != RecordList);
 
@@ -130,9 +136,32 @@ int saveRecords(recordList* RecordList) {
 #pragma endregion
 
 #pragma region RecordsFunctions
+//removes money from client based on the price of the vehicle
+bool removeMoneyFromClient(int nif, int price, clientList* ClientList) {
+	if (ClientList == NULL)
+		return false;
+
+	clientList* aux = ClientList;
+	do
+	{
+		if (aux->c.nif == nif)
+			if (aux->c.money < price)
+				return false;
+			else
+			{
+				aux->c.money -= price;
+				return true;
+			}
+		aux = aux->next;
+	} while (aux != ClientList);
+	return false;
+}
 
 //creates a record and adds it into the list
-int createRecord(recordList* RecordList, int c, vehicle veh, client cli) {
+int createRecord(recordList* RecordList, int c, vehicle veh, client cli, clientList* ClientList) {
+	if (cli.money < veh.price)
+		return -6;
+
 	//start at the head of the list
 	recordList* aux = RecordList;
 
@@ -151,6 +180,11 @@ int createRecord(recordList* RecordList, int c, vehicle veh, client cli) {
 	recordList* rl = (recordList*)malloc(sizeof(recordList));
 	if (rl == NULL)
 		return -2;
+	bool removed = removeMoneyFromClient(cli.nif, veh.price, ClientList);
+	if (!removed) {
+		free(rl);
+		return -7;
+	}
 	rl->r.cod = c;
 	rl->r.c = cli;
 	rl->r.v = veh;

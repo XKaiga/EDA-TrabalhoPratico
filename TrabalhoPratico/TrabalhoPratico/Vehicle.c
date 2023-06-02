@@ -1,4 +1,10 @@
-
+/*****************************************************************//**
+ * \file   Vehicle.c
+ * \brief  Vehicle's Functions
+ * 
+ * \author Helder
+ * \date   June 2023
+ *********************************************************************/
 #include "Headers.h"
 
 #pragma region Save&Load
@@ -66,7 +72,7 @@ int loadBinVehicleData(pVehicleList* pVehicleList) {
 			return -2;
 
 		//read the data from the file into the current node
-		fread(&vehicles->v, sizeof(vehicleList), 1, fp);
+		fread(&vehicles->v, sizeof(vehicle), 1, fp);
 		if (vehicles == NULL || feof(fp))
 		{
 			free(vehicles);
@@ -115,7 +121,7 @@ int saveVehicles(vehicleList* VehicleList) {
 	do
 	{
 		//write the contents of the current node to the file
-		fwrite(aux, sizeof(vehicleList), 1, fp);
+		fwrite(&aux->v, sizeof(vehicle), 1, fp);
 		aux = aux->next;
 	} while (aux != VehicleList);
 
@@ -127,27 +133,11 @@ int saveVehicles(vehicleList* VehicleList) {
 
 
 #pragma region VehiclesFunctions
-
-//insert a vehicle into the list
-int insertVehicle(vehicleList* VehicleList, int c, char typ[], int bat, int pri, int ys, char local[], char bran[]) {
-	//start at the head of the list
-	vehicleList* aux = VehicleList;
-
-	if (VehicleList->v.cod == c)
-		return -4;
-
-	while (aux != NULL && aux->next != VehicleList)
-	{
-		//if already exists, return false
-		if (aux->v.cod == c)
-			return -4;
-		aux = aux->next;
-	}
-
+vehicleList* createNewVehicle(int c, char typ[], int bat, int pri, int ys, char local[], char bran[]) {
 	//allocate memory
 	vehicleList* v = (vehicleList*)malloc(sizeof(vehicleList));
 	if (v == NULL)
-		return -2;
+		return NULL;
 	v->v.cod = c;
 	strcpy(v->v.type, typ);
 	strcpy(v->v.location, local);
@@ -155,20 +145,53 @@ int insertVehicle(vehicleList* VehicleList, int c, char typ[], int bat, int pri,
 	v->v.batery = bat;
 	v->v.price = pri;
 	v->v.years = ys;
+	v->next = NULL;
+	v->previous = NULL;
+	return v;
+}
 
-	//insert after the last node of the list
-	if (aux != NULL) {
+int insertVehicle(pVehicleList* pVehicleList, vehicle v, bool listCircular) {
+	vehicleList* vehicle = (vehicleList*)malloc(sizeof(vehicleList));
+	if (vehicle == NULL)
+		return NULL;
+
+	vehicle->v = v;
+
+	return insertVehicleList(pVehicleList, vehicle, listCircular);
+}
+//insert a vehicle into the list
+int insertVehicleList(pVehicleList* pVehicleList, vehicleList* v, bool listCircular) {
+	//start at the head of the list
+	vehicleList* aux = *pVehicleList;
+
+	//if list is empty, insert as the head of the list
+	if (*pVehicleList == NULL)
+		*pVehicleList = v;
+	else
+	{
+		if ((*pVehicleList)->v.cod == v->v.cod)
+			return -4;
+
+		while (aux->next != NULL && aux->next != *pVehicleList)
+		{
+			//if already exists, return false
+			if (aux->v.cod == v->v.cod)
+				return -4;
+			aux = aux->next;
+		}
+
+		//insert after the last node of the list
 		aux->next = v;
 		v->previous = aux;
 	}
-	//if list is empty, insert as the head of the list
-	else {
-		VehicleList = v;
+	if (listCircular)
+	{
+		//make the list circular
+		v->next = *pVehicleList;
+		(*pVehicleList)->previous = v;
 	}
-
-	//make the list circular
-	v->next = VehicleList;
-	VehicleList->previous = v;
+	else
+		v->next = NULL;
 
 	return 0;
 }
@@ -318,7 +341,32 @@ int vehiclesFromLocal(vehicleList* VehicleList, char local[], vehicleList** out)
  * \param outVehicle: address of vehicle to return
  * \return true if finded
  */
-bool findVehicle(vehicleList* VehicleList, int c, vehicle* outVehicle){
+bool findVehicle(vehicleList* VehicleList, int c, vehicle* outVehicle) {
+	//start at the head of the list
+	vehicleList* aux = VehicleList;
+
+	while (aux)
+	{
+		//if exists, return true
+		if (aux->v.cod == c) {
+			*outVehicle = aux->v;
+			return true;
+		}
+		aux = aux->next;
+	}
+
+	return false;
+}
+
+/**
+ * finds a vehicle in a circular list based on the code.
+ *
+ * \param VehicleList: List of Vehicles
+ * \param c: code of the Vehicle
+ * \param outVehicle: address of vehicle to return
+ * \return true if finded
+ */
+bool findVehicleCircularList(vehicleList* VehicleList, int c, vehicle* outVehicle) {
 	//start at the head of the list
 	vehicleList* aux = VehicleList;
 
@@ -336,6 +384,195 @@ bool findVehicle(vehicleList* VehicleList, int c, vehicle* outVehicle){
 	} while (aux != VehicleList);
 
 	return false;
+}
+
+/**
+ * \brief Find the number of vehicles with a specific type.
+ *
+ * \param VehiclesList Pointer to a vehicle list.
+ * \param type The type of vehicle to search for.
+ * \return The count of vehicles with the specified type.
+ */
+int findHowManyVehiclesWithType(vehicleList* VehiclesList, char* type) {
+	int numVehiclesOfType = 0;
+
+	vehicleList* aux = VehiclesList;
+	while (aux)
+	{
+		if (strcmp(aux->v.type, type) == 0)
+			numVehiclesOfType++;
+		aux = aux->next;
+	}
+
+	return numVehiclesOfType;
+}
+
+/**
+ * \brief Remove a vehicle from a vehicle list.
+ *
+ * \param VehicleList Pointer to a vehicle list.
+ * \param cod The code of the vehicle to be removed.
+ * \return True if successful, false otherwise.
+ */
+bool removeVehicleFromVehicleList(pVehicleList* VehicleList, int cod) {
+	if (*VehicleList == NULL)
+		return false;
+
+	vehicleList* aux = *VehicleList;
+	while (aux)
+	{
+		if (aux->v.cod == cod)
+		{
+			if (aux == *VehicleList)
+				*VehicleList = aux->next;
+			else
+			{
+				vehicleList* auxPrevious = aux->previous;
+				auxPrevious->next = aux->next;
+
+				vehicleList* auxNext = aux->next;
+				if (auxNext != NULL)
+					auxNext->previous = auxPrevious;
+			}
+			free(aux);
+			break;
+		}
+		aux = aux->next;
+	}
+
+	return true;
+}
+
+/**
+ * \brief Find vehicles with batery below 50%.
+ *
+ * \param VehicleList Pointer to a vehicle list.
+ * \param pFindedVehicles Pointer to store the found vehicles.
+ * \return True if successful, false otherwise.
+ */
+bool findVehiclesBelow50(vehicleList* VehicleList, pVehicleList* pFindedVehicles) {
+	if (VehicleList == NULL)
+		return false;
+
+	*pFindedVehicles = NULL;
+
+	vehicleList* auxVehicles = VehicleList;
+	do
+	{
+		if (auxVehicles->v.batery < 50)
+			insertVehicle(pFindedVehicles, auxVehicles->v, false);
+		auxVehicles = auxVehicles->next;
+	} while (auxVehicles != VehicleList);
+
+	if (pFindedVehicles == NULL)
+		return false;
+	return true;
+}
+
+#pragma endregion
+
+
+#pragma region LocalFunctions
+/**
+ * \brief Find vehicles in a specific local.
+ *
+ * \param VehicleList Pointer to a vehicle list.
+ * \param localName The name of the local to search in.
+ * \param pFindedVehicles Pointer to store the found vehicles.
+ * \param withType Variable indicating whether to filter by vehicle type.
+ * \param type The vehicle type to filter by.
+ * \return True if successful, false otherwise.
+ */
+bool findVehiclesInLocal(vehicleList* VehicleList, char* localName, pVehicleList* pFindedVehicles, bool withType, char* type) {
+	if (VehicleList == NULL)
+		return false;
+
+	vehicleList* auxVehicles = VehicleList;
+	while (auxVehicles)
+	{
+		if (strcmp(auxVehicles->v.location, localName) == 0)
+			if (withType) {
+				if (strcmp(auxVehicles->v.type, type) == 0)
+					insertVehicle(pFindedVehicles, auxVehicles->v, false);
+			}
+			else
+				insertVehicle(pFindedVehicles, auxVehicles->v, false);
+		auxVehicles = auxVehicles->next;
+	}
+	return true;
+}
+
+/**
+ * \brief Find vehicles in a specific local using a circular list.
+ *
+ * \param VehicleList Pointer to a vehicle list.
+ * \param localName The name of the local to search in.
+ * \param pFindedVehicles Pointer to store the found vehicles.
+ * \param withType Variable indicating whether to filter by vehicle type.
+ * \param type The vehicle type to filter by.
+ * \return True if successful, false otherwise.
+ */
+bool findVehiclesInLocalCircularList(vehicleList* VehicleList, char* localName, pVehicleList* pFindedVehicles, bool withType, char* type) {
+	if (VehicleList == NULL)
+		return false;
+
+	vehicleList* auxVehicles = VehicleList;
+	do
+	{
+		if (strcmp(auxVehicles->v.location, localName) == 0)
+			if (withType) {
+				if (strcmp(auxVehicles->v.type, type) == 0)
+					insertVehicle(pFindedVehicles, auxVehicles->v, false);
+			}
+			else
+				insertVehicle(pFindedVehicles, auxVehicles->v, false);
+		auxVehicles = auxVehicles->next;
+	} while (auxVehicles != VehicleList);
+	return true;
+}
+
+/**
+ * \brief Find vehicles within a given radius of a specific local in the graph.
+ *
+ * \param graph The graph.
+ * \param VehicleList Pointer to the vehicle list.
+ * \param nameOrigin The name of the origin location.
+ * \param radius The radius in kilometers.
+ * \param pFindedVehicles Pointer to store the found vehicles.
+ * \param withType Variable indicating whether to filter by vehicle type.
+ * \param type The vehicle type to filter by.
+ * \return True if successful, false otherwise.
+ */
+bool findVehiclesInRadius(localList* graph, vehicleList* VehicleList, char* nameOrigin, int radius, pVehicleList* pFindedVehicles, bool withType, char* type) {
+	if (graph == NULL || VehicleList == NULL)
+		return false;
+
+	localList* aux = graph;
+	do
+	{
+		if (strcmp(aux->l.name, nameOrigin) == 0)
+			break;
+		aux = aux->next;
+	} while (aux != graph);
+
+	findVehiclesInLocalCircularList(VehicleList, aux->l.name, pFindedVehicles, withType, type);
+	aux->visited = true;
+
+	adjLocalList* auxAdjs = aux->adjLocals;
+	while (auxAdjs)
+	{
+		if (auxAdjs->adjL.distance <= radius)
+		{
+			localList* local = findLocalByCod(graph, auxAdjs->adjL.cod);
+			if (local == NULL)
+				return false;
+
+			if (!local->visited && auxAdjs->adjL.distance < radius)
+				findVehiclesInRadius(graph, VehicleList, local->l.name, radius - auxAdjs->adjL.distance, pFindedVehicles, withType, type);
+		}
+		auxAdjs = auxAdjs->next;
+	}
+	return true;
 }
 
 #pragma endregion

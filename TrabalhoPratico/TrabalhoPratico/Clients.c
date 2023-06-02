@@ -1,4 +1,10 @@
-
+/*****************************************************************//**
+ * \file   Clients.c
+ * \brief  Client's Functions
+ * 
+ * \author Helder
+ * \date   June 2023
+ *********************************************************************/
 #include "Headers.h"
 
 #pragma region Save&Load
@@ -66,7 +72,7 @@ int loadBinClientData(pClientList* pClientList) {
 			return -2;
 
 		//read the data from the file into the current node
-		fread(&clients->c, sizeof(clientList), 1, fp);
+		fread(&(clients->c), sizeof(client), 1, fp);
 		if (clients == NULL || feof(fp))
 		{
 			free(clients);
@@ -115,7 +121,7 @@ int saveClients(clientList* ClientList) {
 	do
 	{
 		//write the contents of the current node to the file
-		fwrite(aux, sizeof(clientList), 1, fp);
+		fwrite(&(aux->c), sizeof(client), 1, fp);
 		aux = aux->next;
 	} while (aux != ClientList);
 

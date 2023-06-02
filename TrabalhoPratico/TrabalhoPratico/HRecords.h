@@ -30,8 +30,10 @@ int saveRecords(struct recordList* RecordList);
 #pragma endregion
 
 #pragma region RecordsFunctions
+//removes money from client based on the price of the vehicle
+bool removeMoneyFromClient(int nif, int price, clientList* ClientList);
 
-int createRecord(recordList* RecordList, int c, vehicle veh, client cli);
+int createRecord(recordList* RecordList, int c, vehicle veh, client cli, clientList* ClientList);
 
 #pragma endregion
 

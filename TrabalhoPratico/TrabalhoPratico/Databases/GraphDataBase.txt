@@ -1,0 +1,25 @@
+0;Viana do Castelo
+1;61
+1;Braga
+2;105
+4;56
+2;Vila Real
+0;180
+4;95
+6;93
+3;Braganca
+2;118
+4;Porto
+6;128
+5;Aveiro
+4;73
+6;87
+8;59
+6;Viseu
+3;198
+7;76
+7;Guarda
+3;177
+8;Coimbra
+6;92
+7;154
